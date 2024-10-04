@@ -5,3 +5,8 @@ description = "KeePassXC runner"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []
+
+[tool.uv]
+dev-dependencies = [
+    "ruff>=0.6.8",
+]
