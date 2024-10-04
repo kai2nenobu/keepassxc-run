@@ -1,0 +1,7 @@
+[project]
+name = "keepassxc-run"
+version = "0.0.1"
+description = "KeePassXC runner"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
