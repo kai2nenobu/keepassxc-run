@@ -1,6 +1,1 @@
-def main():
-    print("Hello from keepassxc-run!")
-
-
-if __name__ == "__main__":
-    main()
+__version__ = "0.0.1"

@@ -5,3 +5,18 @@ description = "KeePassXC runner"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []
+
+[project.scripts]
+keepassxc-run = "keepassxc_run.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "ruff>=0.6.8",
+]
+
+[tool.ruff]
+line-length = 120
