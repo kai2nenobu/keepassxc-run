@@ -4,6 +4,8 @@ import os
 import sys
 import subprocess
 
+from dotenv import dotenv_values
+
 
 def _git_credential_keepassxc(url: str) -> str:
     """Fetch a credential value by 'git-credential-keepassxc'"""
@@ -23,9 +25,13 @@ def _git_credential_keepassxc(url: str) -> str:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", nargs="+", help="command to execute")
+    parser.add_argument("--env-file", action="append", default=[], help="Enable Dotenv integration with specific Dotenv files to parse. For example: --env-file=.env")
     args = parser.parse_args(sys.argv[1:])
 
     envs = os.environ.copy()
+    for env_file in args.env_file:
+        env_file_values = dotenv_values(env_file)
+        envs.update(env_file_values)
     for key, value in envs.items():
         if value.startswith("keepassxc://"):
             envs[key] = _git_credential_keepassxc(value)
