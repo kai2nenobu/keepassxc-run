@@ -4,7 +4,9 @@ version = "0.0.1"
 description = "KeePassXC runner"
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = []
+dependencies = [
+    "python-dotenv>=1.0.1",
+]
 
 [project.scripts]
 keepassxc-run = "keepassxc_run.cli:main"
