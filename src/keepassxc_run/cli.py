@@ -38,7 +38,12 @@ def _read_envs(env_files: list[str]) -> dict[str, str]:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", nargs="+", help="command to execute")
-    parser.add_argument("--env-file", action="append", default=[], help="Enable Dotenv integration with specific Dotenv files to parse. For example: --env-file=.env")
+    parser.add_argument(
+        "--env-file",
+        action="append",
+        default=[],
+        help="Enable Dotenv integration with specific Dotenv files to parse. For example: --env-file=.env",
+    )
     args = parser.parse_args(sys.argv[1:])
 
     envs = _read_envs(args.env_file)
