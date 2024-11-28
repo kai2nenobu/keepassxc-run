@@ -17,6 +17,7 @@ build-backend = "hatchling.build"
 
 [tool.uv]
 dev-dependencies = [
+    "pyinstaller>=6.11.1",
     "ruff>=0.6.8",
 ]
 
