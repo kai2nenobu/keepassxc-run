@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.0.2](https://github.com/kai2nenobu/keepassxc-run/compare/v0.0.1...v0.0.2) - 2024-11-29
+- log error message when git-credential-keepassxc failed by @kai2nenobu in https://github.com/kai2nenobu/keepassxc-run/pull/4
+- Release a new version by using tagpr by @kai2nenobu in https://github.com/kai2nenobu/keepassxc-run/pull/5
+
 ## [v0.0.1](https://github.com/kai2nenobu/keepassxc-run/commits/v0.0.1) - 2024-11-28
 
 - Initial implementation
