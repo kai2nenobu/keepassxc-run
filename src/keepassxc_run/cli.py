@@ -25,11 +25,14 @@ def _git_credential_keepassxc(url: str) -> str:
         logger.warning("Fail to fetch a secret value by %s: URL=%s, error=%s", exe, url, process.stderr)
         return url
     credential = json.loads(process.stdout)
-    attribute = url.split("/")[-1]
-    if attribute in ("username", "password", "url"):
-        return credential[attribute]
+    field = url.split("/")[-1]
+    if field in ("username", "password", "url"):
+        return credential[field]
+    elif ("string_fields" in credential) and (field in credential["string_fields"]):
+        return credential["string_fields"][field]
     else:
-        return credential["string_fields"][attribute]
+        logger.warning("Database entry doesn't have field '%s': URL=%s", field, url)
+        return url
 
 
 def _read_envs(env_files: list[str]) -> dict[str, str]:
