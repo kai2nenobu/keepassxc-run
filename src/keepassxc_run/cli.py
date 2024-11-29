@@ -1,25 +1,38 @@
 import argparse
 import json
+import logging
 import os
 import sys
 import subprocess
 
 from dotenv import dotenv_values
 
+logger = logging.getLogger(__name__)
+
 
 def _git_credential_keepassxc(url: str) -> str:
     """Fetch a credential value by 'git-credential-keepassxc'"""
     exe = "git-credential-keepassxc"
     stdin = f"url={url}"
-    output = subprocess.check_output(
-        [exe, "--unlock", "10,3000", "get", "--json", "--advanced-fields"], input=stdin.encode("utf-8")
+    process = subprocess.run(
+        args=[exe, "--unlock", "10,3000", "get", "--json", "--advanced-fields"],
+        check=False,
+        capture_output=True,
+        encoding="utf-8",
+        input=stdin,
     )
-    credential = json.loads(output)
-    attribute = url.split("/")[-1]
-    if attribute in ("username", "password", "url"):
-        return credential[attribute]
+    if process.returncode > 0:
+        logger.warning("Fail to fetch a secret value by %s: URL=%s, error=%s", exe, url, process.stderr)
+        return url
+    credential = json.loads(process.stdout)
+    field = url.split("/")[-1]
+    if field in ("username", "password", "url"):
+        return credential[field]
+    elif ("string_fields" in credential) and (field in credential["string_fields"]):
+        return credential["string_fields"][field]
     else:
-        return credential["string_fields"][attribute]
+        logger.warning("Database entry doesn't have field '%s': URL=%s", field, url)
+        return url
 
 
 def _read_envs(env_files: list[str]) -> dict[str, str]:
@@ -36,6 +49,7 @@ def _read_envs(env_files: list[str]) -> dict[str, str]:
 
 
 def main():
+    logging.basicConfig()
     parser = argparse.ArgumentParser()
     parser.add_argument("command", nargs="+", help="command to execute")
     parser.add_argument(
