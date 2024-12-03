@@ -69,7 +69,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: "exe-${{ matrix.OS }}"
-          path: dist/*.zip
+          path: ${{ runner.os == 'Windows' && 'archive/*.zip' || 'archive/*.tar.gz' }}
       - name: Upload an archive as release assets
         if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
         run: make upload-exe

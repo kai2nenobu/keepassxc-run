@@ -73,14 +73,14 @@ build-exe: ## Build a single executable by pyinstaller
 
 archive-exe: ## Archive a single executable
 ifeq ($(detected_os),Windows)
-	cd dist && pwsh -NoProfile -Command \
-		"Compress-Archive -DestinationPath $(archive_file) -LiteralPath $(executable_name)"
+	mkdir -p archive && cd dist && pwsh -NoProfile -Command \
+		"Compress-Archive -DestinationPath ../archive/$(archive_file) -LiteralPath $(executable_name)"
 else
-	cd dist && tar cf "$(archive_file)" "$(executable_name)"
+	mkdir -p archive && cd archive && tar cf "../archive/$(archive_file)" "$(executable_name)"
 endif
 
 upload-exe: ## Upload an archive per platform to GitHub release assets
-	gh release upload $(TAG_NAME) dist/$(archive_file)
+	gh release upload $(TAG_NAME) archive/$(archive_file)
 
 clean: ## Clean up generated files
-	@$(RM) -r build/ dist/
+	@$(RM) -r build/ dist/ archive/
