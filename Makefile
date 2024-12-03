@@ -76,7 +76,7 @@ ifeq ($(detected_os),Windows)
 	mkdir -p archive && cd dist && pwsh -NoProfile -Command \
 		"Compress-Archive -DestinationPath ../archive/$(archive_file) -LiteralPath $(executable_name)"
 else
-	mkdir -p archive && cd archive && tar cf "../archive/$(archive_file)" "$(executable_name)"
+	mkdir -p archive && cd dist && tar cf "../archive/$(archive_file)" "$(executable_name)"
 endif
 
 upload-exe: ## Upload an archive per platform to GitHub release assets
