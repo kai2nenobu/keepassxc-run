@@ -55,7 +55,7 @@ jobs:
       contents: write
     strategy:
       matrix:
-        OS: [ubuntu-24.04, windows-2022, macos-12]
+        OS: [ubuntu-24.04, windows-2022, macos-14]
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
