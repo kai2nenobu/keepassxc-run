@@ -16,10 +16,27 @@ endif
 .PHONY: $(shell grep -oE ^[a-zA-Z0-9%_-]+: $(MAKEFILE_LIST) | sed 's/://')
 
 # Variables
+PROJECT := keepassxc-run
 UV ?= uv
 RUFF ?= $(UV) run ruff
 PYINSTALLER ?= $(UV) run pyinstaller
 PYINSTALLER_FLAGS ?= --onefile
+
+# OS detection
+ifeq ($(OS),Windows_NT)
+    detected_os := Windows
+else
+	# Linux or Darwin or others
+    detected_os := $(shell uname -s)
+endif
+
+# architecture detection
+uname_machine := $(shell uname -m)
+ifeq ($(uname_machine),x86_64)
+    detected_arch := amd64
+else
+    detected_arch := unknown
+endif
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -39,9 +56,31 @@ format: ## Format all files
 build: ## Build a package
 	$(UV) build
 
-UNAME := $(shell uname -s)
-ifeq ($(UNAME), Linux)
-	PYINSTALLER_FLAGS += --strip
+
+# Tasks for executables
+executable_name := $(PROJECT)
+archive_extension := tar.gz
+ifeq ($(detected_os),Windows)
+    executable_name := $(PROJECT).exe
+    archive_extension := zip
+else
+    PYINSTALLER_FLAGS += --strip
 endif
+archive_file := $(PROJECT)_$(detected_os)_$(detected_arch).$(archive_extension)
+
 build-exe: ## Build a single executable by pyinstaller
-	$(PYINSTALLER) $(PYINSTALLER_FLAGS) ./bin/keepassxc-run.py
+	$(PYINSTALLER) $(PYINSTALLER_FLAGS) ./bin/$(PROJECT).py
+
+archive-exe: ## Archive a single executable
+ifeq ($(detected_os),Windows)
+	cd dist && pwsh -NoProfile -Command \
+		"Compress-Archive -DestinationPath $(archive_file) -LiteralPath $(executable_name)"
+else
+	cd dist && tar cf "$(archive_file)" "$(executable_name)"
+endif
+
+upload-exe: ## Upload an archive per platform to GitHub release assets
+	gh release upload $(TAG_NAME) dist/$(archive_file)
+
+clean: ## Clean up generated files
+	@$(RM) -r build/ dist/
