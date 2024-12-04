@@ -35,5 +35,5 @@ def test_call_command_successfully_other_than_windows(capfd):
 def test_call_command_with_option(capfd):
     rc = run(["--", "python", "--version"])
     assert rc == 0
-    # out, _ = capfd.readouterr()
-    # assert out.startswith("Python 3.")
+    out, _ = capfd.readouterr()
+    assert out.startswith("Python 3.")
