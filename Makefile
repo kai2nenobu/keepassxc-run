@@ -74,7 +74,7 @@ else
 	mkdir -p archive && cd dist && tar cf "../archive/$(archive_file)" "$(executable_name)"
 endif
 
-upload-exe: ## Upload an archive per platform to GitHub release assets
+upload-archive: ## Upload an archive per platform to GitHub release assets
 	gh release upload $(TAG_NAME) archive/$(archive_file)
 
 clean: ## Clean up generated files

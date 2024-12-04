@@ -72,7 +72,7 @@ jobs:
           path: ./dist/
       - name: Upload an archive as release assets
         if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
-        run: make upload-exe
+        run: make upload-archive
         env:
           TAG_NAME: ${{ github.event.release.tag_name }}
           GITHUB_TOKEN: ${{ secrets.github_token }}
