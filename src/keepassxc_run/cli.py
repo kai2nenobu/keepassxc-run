@@ -47,10 +47,13 @@ def _read_envs(env_files: list[str]) -> dict[str, str]:
             envs[key] = _git_credential_keepassxc(value)
     return envs
 
+
 def run(argv: list[str]) -> int:
     logging.basicConfig()
     parser = argparse.ArgumentParser(add_help=False, exit_on_error=False)
-    parser.add_argument("command", nargs="*", help="command to execute")
+    parser.add_argument(
+        "command", nargs="*", help='command to execute. prepend "--" if you specify command option like "--version"'
+    )
     parser.add_argument("--help", action="store_true", help="show this help message")
     parser.add_argument(
         "--env-file",
