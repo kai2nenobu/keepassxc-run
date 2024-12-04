@@ -49,8 +49,9 @@ def _read_envs(env_files: list[str]) -> dict[str, str]:
 
 def run(argv: list[str]) -> int:
     logging.basicConfig()
-    parser = argparse.ArgumentParser(exit_on_error=False)
-    parser.add_argument("command", nargs="+", help="command to execute")
+    parser = argparse.ArgumentParser(add_help=False, exit_on_error=False)
+    parser.add_argument("command", nargs="*", help="command to execute")
+    parser.add_argument("--help", action="store_true", help="show this help message")
     parser.add_argument(
         "--env-file",
         action="append",
@@ -61,6 +62,15 @@ def run(argv: list[str]) -> int:
         args = parser.parse_args(argv)
     except argparse.ArgumentError as e:
         logger.error("%s", str(e))
+        parser.print_help()
+        return 2
+
+    if args.help:
+        parser.print_help()
+        return 0
+
+    if len(args.command) == 0:
+        logger.error("expected at least 1 arguments for command but got 0 instead")
         parser.print_help()
         return 2
 
