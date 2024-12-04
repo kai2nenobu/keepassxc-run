@@ -25,3 +25,18 @@ dev-dependencies = [
 
 [tool.ruff]
 line-length = 120
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov --cov-report=term --cov-report=html"
+
+[tool.coverage.run]
+branch = true
+source = ["src/keepassxc_run"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    # exclude main function
+    '''if __name__ == ['"]__main__['"]'''
+]

@@ -48,9 +48,11 @@ lint: ## Lint all files
 format: ## Format all files
 	$(RUFF) format .
 
+test: ## Test by pytest
+	$(UV) run pytest
+
 build: ## Build a package
 	$(UV) build
-
 
 # Tasks for executables
 executable_name := $(PROJECT)
