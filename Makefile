@@ -31,12 +31,7 @@ else
 endif
 
 # architecture detection
-uname_machine := $(shell uname -m)
-ifeq ($(uname_machine),x86_64)
-    detected_arch := amd64
-else
-    detected_arch := unknown
-endif
+detected_arch := $(shell uname -m)
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
