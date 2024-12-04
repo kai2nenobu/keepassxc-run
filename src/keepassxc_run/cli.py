@@ -47,8 +47,7 @@ def _read_envs(env_files: list[str]) -> dict[str, str]:
             envs[key] = _git_credential_keepassxc(value)
     return envs
 
-
-def main():
+def run(argv: list[str]) -> int:
     logging.basicConfig()
     parser = argparse.ArgumentParser()
     parser.add_argument("command", nargs="+", help="command to execute")
@@ -58,11 +57,15 @@ def main():
         default=[],
         help="Enable Dotenv integration with specific Dotenv files to parse. For example: --env-file=.env",
     )
-    args = parser.parse_args(sys.argv[1:])
+    args = parser.parse_args(argv)
 
     envs = _read_envs(args.env_file)
     process = subprocess.run(args=args.command, check=False, env=envs)
-    sys.exit(process.returncode)
+    return process.returncode
+
+
+def main():
+    sys.exit(run(sys.argv[1:]))
 
 
 if __name__ == "__main__":
