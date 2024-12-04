@@ -49,7 +49,7 @@ def _read_envs(env_files: list[str]) -> dict[str, str]:
 
 
 def run(argv: list[str]) -> int:
-    logging.basicConfig()
+    logging.basicConfig(format="[%(asctime)s.%(msecs)03d] %(levelname)s (%(name)s) %(message)s", datefmt="%X")
     parser = argparse.ArgumentParser(add_help=False, exit_on_error=False)
     parser.add_argument(
         "command", nargs="*", help='command to execute. prepend "--" if you specify command option like "--version"'
