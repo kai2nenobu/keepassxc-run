@@ -11,6 +11,12 @@ dependencies = [
 [project.scripts]
 keepassxc-run = "keepassxc_run.cli:main"
 
+[dependency-groups]
+test = [
+    "pytest>=8.3.4",
+    "pytest-cov>=6.0.0",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -23,3 +29,16 @@ dev-dependencies = [
 
 [tool.ruff]
 line-length = 120
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    # exclude main function
+    '''if __name__ == ['"]__main__['"]'''
+]

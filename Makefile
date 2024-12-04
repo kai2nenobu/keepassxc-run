@@ -19,6 +19,8 @@ endif
 PROJECT := keepassxc-run
 UV ?= uv
 RUFF ?= $(UV) run ruff
+TOX ?= $(UV) tool run --with tox-uv -- tox run
+TOX_FLAGS ?=
 PYINSTALLER ?= $(UV) run pyinstaller
 PYINSTALLER_FLAGS ?= --onefile
 
@@ -48,9 +50,14 @@ lint: ## Lint all files
 format: ## Format all files
 	$(RUFF) format .
 
+test: export TOX_ENV = py312
+test: tox ## Test on a Python 3.12 environment
+
+tox: ## Test on multiple versions by tox
+	$(TOX) $(TOX_FLAGS)
+
 build: ## Build a package
 	$(UV) build
-
 
 # Tasks for executables
 executable_name := $(PROJECT)

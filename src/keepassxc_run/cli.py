@@ -48,21 +48,42 @@ def _read_envs(env_files: list[str]) -> dict[str, str]:
     return envs
 
 
-def main():
+def run(argv: list[str]) -> int:
     logging.basicConfig()
-    parser = argparse.ArgumentParser()
-    parser.add_argument("command", nargs="+", help="command to execute")
+    parser = argparse.ArgumentParser(add_help=False, exit_on_error=False)
+    parser.add_argument(
+        "command", nargs="*", help='command to execute. prepend "--" if you specify command option like "--version"'
+    )
+    parser.add_argument("--help", action="store_true", help="show this help message")
     parser.add_argument(
         "--env-file",
         action="append",
         default=[],
         help="Enable Dotenv integration with specific Dotenv files to parse. For example: --env-file=.env",
     )
-    args = parser.parse_args(sys.argv[1:])
+    try:
+        args = parser.parse_args(argv)
+    except argparse.ArgumentError as e:
+        logger.error("%s", str(e))
+        parser.print_help()
+        return 2
+
+    if args.help:
+        parser.print_help()
+        return 0
+
+    if len(args.command) == 0:
+        logger.error("expected at least 1 arguments for command but got 0 instead")
+        parser.print_help()
+        return 2
 
     envs = _read_envs(args.env_file)
     process = subprocess.run(args=args.command, check=False, env=envs)
-    sys.exit(process.returncode)
+    return process.returncode
+
+
+def main():
+    sys.exit(run(sys.argv[1:]))
 
 
 if __name__ == "__main__":
