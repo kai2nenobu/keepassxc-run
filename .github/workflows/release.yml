@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  release:
+    types: [published]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Build a package
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+      - name: Build
+        run: uv build
+      - name: Archive a package
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: dist/
+  publish:
+    name: Publish a package to PyPI
+    runs-on: ubuntu-24.04
+    needs: [build]
+    if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+    environment:
+      name: pypi
+      url: https://pypi.org/project/keepassxc-run/
+    permissions:
+      id-token: write # mandatory for trusted publishing
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: package
+          path: dist/
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+  pyinstaller:
+    needs: [build]
+    runs-on: "${{ matrix.OS }}"
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        OS: [ubuntu-24.04, windows-2022, macos-14]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+      - name: Build a single executable & archive
+        run: make build-exe archive-exe
+      - name: Run executable
+        run: ./dist/keepassxc-run --help
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "exe-${{ matrix.OS }}"
+          path: ./dist/
+      - name: Upload an archive as release assets
+        if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+        run: make upload-archive
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          GITHUB_TOKEN: ${{ secrets.github_token }}
