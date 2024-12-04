@@ -11,6 +11,12 @@ dependencies = [
 [project.scripts]
 keepassxc-run = "keepassxc_run.cli:main"
 
+[dependency-groups]
+test = [
+    "pytest>=8.3.4",
+    "pytest-cov>=6.0.0",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -18,8 +24,6 @@ build-backend = "hatchling.build"
 [tool.uv]
 dev-dependencies = [
     "pyinstaller>=6.11.1",
-    "pytest>=8.3.4",
-    "pytest-cov>=6.0.0",
     "ruff>=0.6.8",
 ]
 
@@ -28,11 +32,9 @@ line-length = 120
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov --cov-report=term --cov-report=html"
 
 [tool.coverage.run]
 branch = true
-source = ["src/keepassxc_run"]
 
 [tool.coverage.report]
 exclude_lines = [

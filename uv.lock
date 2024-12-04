@@ -134,9 +134,11 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "pyinstaller" },
+    { name = "ruff" },
+]
+test = [
     { name = "pytest" },
     { name = "pytest-cov" },
-    { name = "ruff" },
 ]
 
 [package.metadata]
@@ -145,9 +147,11 @@ requires-dist = [{ name = "python-dotenv", specifier = ">=1.0.1" }]
 [package.metadata.requires-dev]
 dev = [
     { name = "pyinstaller", specifier = ">=6.11.1" },
+    { name = "ruff", specifier = ">=0.6.8" },
+]
+test = [
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "pytest-cov", specifier = ">=6.0.0" },
-    { name = "ruff", specifier = ">=0.6.8" },
 ]
 
 [[package]]
