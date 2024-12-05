@@ -65,7 +65,12 @@ def run(argv: list[str]) -> int:
 
 
 def main():
-    sys.exit(run(sys.argv[1:]))
+    try:
+        rc = run(sys.argv[1:])
+    except Exception as e:
+        logger.error("keepassxc-run aborted with some error: %s", e)
+        rc = 2
+    sys.exit(rc)
 
 
 if __name__ == "__main__":
