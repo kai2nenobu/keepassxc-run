@@ -1,5 +1,4 @@
 import argparse
-import json
 import logging
 import os
 import sys
@@ -8,48 +7,20 @@ import subprocess
 from dotenv import dotenv_values
 
 import keepassxc_run
+from keepassxc_run.secret import SecretStore
 
 logger = logging.getLogger(__name__)
 
 
-def _git_credential_keepassxc(url: str, debug: bool) -> str:
-    """Fetch a credential value by 'git-credential-keepassxc'"""
-    exe = "git-credential-keepassxc"
-    debug_flag = ["-vvv"] if debug else []
-    command = [exe, *debug_flag, "--unlock", "10,3000", "get", "--json", "--advanced-fields"]
-    stdin = f"url={url}"
-    process = subprocess.run(
-        args=command,
-        check=False,
-        capture_output=True,
-        encoding="utf-8",
-        input=stdin,
-    )
-    if process.returncode > 0:
-        logger.warning("Fail to fetch a secret value by %s: URL=%s, error=%s", exe, url, process.stderr)
-        return url
-    logger.debug("%s execution log: %s", exe, process.stderr)
-    credential = json.loads(process.stdout)
-    field = url.split("/")[-1]
-    if field in ("username", "password", "url"):
-        return credential[field]
-    elif ("string_fields" in credential) and (field in credential["string_fields"]):
-        return credential["string_fields"][field]
-    else:
-        logger.warning("Database entry doesn't have field '%s': URL=%s", field, url)
-        return url
-
-
-def _read_envs(env_files: list[str], debug: bool) -> dict[str, str]:
+def _read_envs(env_files: list[str], secret_store: SecretStore) -> dict[str, str]:
     """Read environment variables from running environment and env files."""
     envs = os.environ.copy()
     for env_file in env_files:
         env_file_values = dotenv_values(env_file)
         envs.update(env_file_values)
-    # Fetch secret values from KeePassXC database
     for key, value in envs.items():
         if value.startswith("keepassxc://"):
-            envs[key] = _git_credential_keepassxc(value, debug)
+            envs[key] = secret_store.fetch(value)
     return envs
 
 
@@ -87,7 +58,8 @@ def run(argv: list[str]) -> int:
         return 2
 
     logger.debug("keepassxc-run version: %s", keepassxc_run.__version__)
-    envs = _read_envs(args.env_file, args.debug)
+    secret_store = SecretStore(debug=args.debug)
+    envs = _read_envs(args.env_file, secret_store)
     process = subprocess.run(args=args.command, check=False, env=envs)
     return process.returncode
 
