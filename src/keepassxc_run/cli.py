@@ -12,12 +12,14 @@ import keepassxc_run
 logger = logging.getLogger(__name__)
 
 
-def _git_credential_keepassxc(url: str) -> str:
+def _git_credential_keepassxc(url: str, debug: bool) -> str:
     """Fetch a credential value by 'git-credential-keepassxc'"""
     exe = "git-credential-keepassxc"
+    debug_flag = ["-vvv"] if debug else []
+    command = [exe, *debug_flag, "--unlock", "10,3000", "get", "--json", "--advanced-fields"]
     stdin = f"url={url}"
     process = subprocess.run(
-        args=[exe, "--unlock", "10,3000", "get", "--json", "--advanced-fields"],
+        args=command,
         check=False,
         capture_output=True,
         encoding="utf-8",
@@ -26,6 +28,7 @@ def _git_credential_keepassxc(url: str) -> str:
     if process.returncode > 0:
         logger.warning("Fail to fetch a secret value by %s: URL=%s, error=%s", exe, url, process.stderr)
         return url
+    logger.debug("%s execution log: %s", exe, process.stderr)
     credential = json.loads(process.stdout)
     field = url.split("/")[-1]
     if field in ("username", "password", "url"):
@@ -37,7 +40,7 @@ def _git_credential_keepassxc(url: str) -> str:
         return url
 
 
-def _read_envs(env_files: list[str]) -> dict[str, str]:
+def _read_envs(env_files: list[str], debug: bool) -> dict[str, str]:
     """Read environment variables from running environment and env files."""
     envs = os.environ.copy()
     for env_file in env_files:
@@ -46,7 +49,7 @@ def _read_envs(env_files: list[str]) -> dict[str, str]:
     # Fetch secret values from KeePassXC database
     for key, value in envs.items():
         if value.startswith("keepassxc://"):
-            envs[key] = _git_credential_keepassxc(value)
+            envs[key] = _git_credential_keepassxc(value, debug)
     return envs
 
 
@@ -84,7 +87,7 @@ def run(argv: list[str]) -> int:
         return 2
 
     logger.debug("keepassxc-run version: %s", keepassxc_run.__version__)
-    envs = _read_envs(args.env_file)
+    envs = _read_envs(args.env_file, args.debug)
     process = subprocess.run(args=args.command, check=False, env=envs)
     return process.returncode
 
