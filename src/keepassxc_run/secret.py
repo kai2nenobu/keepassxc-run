@@ -1,5 +1,6 @@
 import json
 import logging
+import shutil
 import subprocess
 
 
@@ -11,7 +12,16 @@ class SecretStore:
 
     def __init__(self, debug: bool = False):
         self._debug = debug
-        self._exe = "git-credential-keepassxc"
+        self._exe = self._find_git_credential_keepassxc()
+
+    def _find_git_credential_keepassxc(self) -> str:
+        exe = shutil.which("git-credential-keepassxc")
+        if exe is None:
+            raise FileNotFoundError(
+                '"git-credential-keepassxc" command not found in PATH. '
+                "Please ensure it is installed and available in your PATH."
+            )
+        return exe
 
     def fetch(self, url: str) -> str:
         """Fetch a secret value from a KeePassXC entry which matches specified URL."""
