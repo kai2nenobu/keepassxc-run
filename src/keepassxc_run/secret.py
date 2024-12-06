@@ -8,7 +8,6 @@ from typing import Optional
 logger = logging.getLogger(__name__)
 
 
-
 class SecretEntry:
     """Object which represents an entry in KeePassXC database."""
 
@@ -33,6 +32,11 @@ class SecretEntry:
             return advanced_field[0][advanced_name]
         # no field matched
         return None
+
+    @property
+    def fullname(self) -> str:
+        return f"{self._raw['group']}/{self._raw['name']}"
+
 
 class SecretStore:
     """Object to fetch secrets. This class fetch secrets by using 'git-credential-keepassxc' command."""
@@ -74,6 +78,6 @@ class SecretStore:
         entry = SecretEntry.from_json(process.stdout)
         field_value = entry.field(field)
         if field_value is None:
-            logger.warning("Database entry doesn't have field '%s': URL=%s", field, url)
+            logger.warning("Database entry doesn't have field '%s': entry=%s", field, entry.fullname)
             return url
         return field_value
