@@ -1,6 +1,6 @@
 [project]
 name = "keepassxc-run"
-version = "0.0.2"
+version = "0.0.3"
 description = "KeePassXC runner"
 readme = "README.md"
 license = { text = "MIT License" }
