@@ -52,7 +52,7 @@ class TestKeePassXC:
             pytest.param("keepassxc://example.com/login", "testuser", id="login"),
             pytest.param("keepassxc://example.com/password", "testuser*p@ssw0rd", id="password"),
             pytest.param("keepassxc://example.com/api_key", "my*api*key", id="advanced_field"),
-        ]
+        ],
     )
     def test_example_com(self, capfd, url, expected):
         with patch.dict("os.environ", {"TEST_SECRET": url}):
