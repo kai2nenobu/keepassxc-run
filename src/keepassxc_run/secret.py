@@ -25,7 +25,7 @@ class SecretStore:
 
     def _run_git_credential_keepassxc(self, url: str) -> subprocess.CompletedProcess:
         debug_flag = ["-vvv"] if self._debug else []
-        command = [self._exe, *debug_flag, "--unlock", "10,3000", "get", "--raw"]
+        command = [self._exe, *debug_flag, "--unlock", "20,1500", "get", "--raw"]
         stdin = f"url={url}"
         process = subprocess.run(
             args=command,
