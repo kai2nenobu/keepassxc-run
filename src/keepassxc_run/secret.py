@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class SecretEntry:
-    """Object to fetch secrets. This class fetch secrets by using 'git-credential-keepassxc' command."""
+    """Object which represents an entry in KeePassXC database."""
 
     @staticmethod
     def from_json(json_str: str) -> "SecretEntry":
@@ -22,6 +22,9 @@ class SecretEntry:
 
     def field(self, name: str) -> Optional[str]:
         """Return a field value matching the specified name."""
+        if name == "username":
+            # "username" is an alias for "login"
+            name = "login"
         if name in ("login", "password"):
             return self._raw[name]
         advanced_name = f"KPH: {name}"

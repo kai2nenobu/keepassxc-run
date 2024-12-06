@@ -50,6 +50,7 @@ class TestKeePassXC:
         ("url", "expected"),
         [
             pytest.param("keepassxc://example.com/login", "testuser", id="login"),
+            pytest.param("keepassxc://example.com/username", "testuser", id="username is alias for login"),
             pytest.param("keepassxc://example.com/password", "testuser*p@ssw0rd", id="password"),
             pytest.param("keepassxc://example.com/api_key", "my*api*key", id="advanced_field"),
         ],
