@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -37,3 +38,33 @@ def test_call_command_with_option(capfd):
     assert rc == 0
     out, _ = capfd.readouterr()
     assert out.startswith("Python 3.")
+
+
+@pytest.mark.require_db
+class TestKeePassXC:
+    def printenv(self, env: str):
+        code = f"import os; print(os.environ['{env}'], end='')"
+        return run(["--", "python", "-c", code])
+
+    @pytest.mark.parametrize(
+        ("url", "expected"),
+        [
+            pytest.param("keepassxc://example.com/login", "testuser", id="login"),
+            pytest.param("keepassxc://example.com/username", "testuser", id="username is alias for login"),
+            pytest.param("keepassxc://example.com/password", "testuser*p@ssw0rd", id="password"),
+            pytest.param("keepassxc://example.com/api_key", "my*api*key", id="advanced_field"),
+        ],
+    )
+    def test_example_com(self, capfd, url, expected):
+        with patch.dict("os.environ", {"TEST_SECRET": url}):
+            rc = self.printenv("TEST_SECRET")
+            assert rc == 0
+            out, _ = capfd.readouterr()
+            assert out == expected
+
+    def test_unknown_field_returns_url_asis(self, capfd):
+        with patch.dict("os.environ", {"TEST_SECRET": "keepassxc://example.com/UNKNOWN_FIELD"}):
+            rc = self.printenv("TEST_SECRET")
+            assert rc == 0
+            out, _ = capfd.readouterr()
+            assert out == "keepassxc://example.com/UNKNOWN_FIELD"

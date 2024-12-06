@@ -32,6 +32,9 @@ line-length = 120
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "require_db: tests which require KeePassXC database)",
+]
 
 [tool.coverage.run]
 branch = true
