@@ -2,10 +2,34 @@ import json
 import logging
 import shutil
 import subprocess
+from typing import Optional
 
 
 logger = logging.getLogger(__name__)
 
+
+
+class SecretEntry:
+    """Object to fetch secrets. This class fetch secrets by using 'git-credential-keepassxc' command."""
+
+    @staticmethod
+    def from_json(json_str: str) -> "SecretEntry":
+        entries_dict = json.loads(json_str)
+        return SecretEntry(entries_dict["entries"][0])
+
+    def __init__(self, entry_dict: dict):
+        self._raw = entry_dict
+
+    def field(self, name: str) -> Optional[str]:
+        """Return a field value matching the specified name."""
+        if name in ("login", "password"):
+            return self._raw[name]
+        advanced_name = f"KPH: {name}"
+        advanced_field = [f for f in self._raw["stringFields"] if advanced_name in f]
+        if advanced_field:
+            return advanced_field[0][advanced_name]
+        # no field matched
+        return None
 
 class SecretStore:
     """Object to fetch secrets. This class fetch secrets by using 'git-credential-keepassxc' command."""
@@ -44,12 +68,9 @@ class SecretStore:
             return url
         logger.debug("%s execution log: %s", self._exe, process.stderr)
         field = url.split("/")[-1]
-        result = json.loads(process.stdout)
-        entry = result["entries"][0]
-        if field in ("login", "password"):
-            return entry[field]
-        advanced_field = [f for f in entry["stringFields"] if f"KPH: {field}" in f]
-        if advanced_field:
-            return advanced_field[0][f"KPH: {field}"]
-        logger.warning("Database entry doesn't have field '%s': URL=%s", field, url)
-        return url
+        entry = SecretEntry.from_json(process.stdout)
+        field_value = entry.field(field)
+        if field_value is None:
+            logger.warning("Database entry doesn't have field '%s': URL=%s", field, url)
+            return url
+        return field_value
