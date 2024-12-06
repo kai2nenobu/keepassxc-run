@@ -60,3 +60,10 @@ class TestKeePassXC:
             assert rc == 0
             out, _ = capfd.readouterr()
             assert out == expected
+
+    def test_unknown_field_returns_url_asis(self, capfd):
+        with patch.dict("os.environ", {"TEST_SECRET": "keepassxc://example.com/UNKNOWN_FIELD"}):
+            rc = self.printenv("TEST_SECRET")
+            assert rc == 0
+            out, _ = capfd.readouterr()
+            assert out == "keepassxc://example.com/UNKNOWN_FIELD"
