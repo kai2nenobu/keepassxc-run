@@ -23,8 +23,7 @@ class SecretStore:
             )
         return exe
 
-    def fetch(self, url: str) -> str:
-        """Fetch a secret value from a KeePassXC entry which matches specified URL."""
+    def _run_git_credential_keepassxc(self, url: str) -> subprocess.CompletedProcess:
         debug_flag = ["-vvv"] if self._debug else []
         command = [self._exe, *debug_flag, "--unlock", "10,3000", "get", "--raw"]
         stdin = f"url={url}"
@@ -35,6 +34,11 @@ class SecretStore:
             encoding="utf-8",
             input=stdin,
         )
+        return process
+
+    def fetch(self, url: str) -> str:
+        """Fetch a secret value from a KeePassXC entry which matches specified URL."""
+        process = self._run_git_credential_keepassxc(url)
         if process.returncode > 0:
             logger.warning("Fail to fetch a secret value by %s: URL=%s, error=%s", self._exe, url, process.stderr)
             return url
