@@ -3,7 +3,7 @@ name = "keepassxc-run"
 version = "0.0.2"
 description = "KeePassXC runner"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = { text = "MIT License" }
 authors = [{ name = "Tsunenobu Kai", email = "kai2nenobu@gmail.com" }]
 keywords = ["keepassxc"]
 requires-python = ">=3.9"
@@ -40,6 +40,13 @@ test = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch]
+build.targets.sdist.include = [
+    "/src",
+    "/tests",
+    "/CHANGELOG.md"
+]
 
 [tool.uv]
 dev-dependencies = [
