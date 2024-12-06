@@ -46,9 +46,17 @@ class TestKeePassXC:
         code = f"import os; print(os.environ['{env}'], end='')"
         return run(["--", "python", "-c", code])
 
-    def test_example_com(self, capfd):
-        with patch.dict("os.environ", {"TEST_SECRET": "keepassxc://example.com/password"}):
+    @pytest.mark.parametrize(
+        ("url", "expected"),
+        [
+            pytest.param("keepassxc://example.com/login", "testuser", id="login"),
+            pytest.param("keepassxc://example.com/password", "testuser*p@ssw0rd", id="password"),
+            pytest.param("keepassxc://example.com/api_key", "my*api*key", id="advanced_field"),
+        ]
+    )
+    def test_example_com(self, capfd, url, expected):
+        with patch.dict("os.environ", {"TEST_SECRET": url}):
             rc = self.printenv("TEST_SECRET")
             assert rc == 0
             out, _ = capfd.readouterr()
-            assert out == "testuser*p@ssw0rd"
+            assert out == expected

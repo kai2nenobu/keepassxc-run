@@ -48,8 +48,8 @@ class SecretStore:
         entry = result["entries"][0]
         if field in ("login", "password"):
             return entry[field]
-        elif ("stringFields" in entry) and (f"KPH: {field}" in entry["stringFields"]):
-            return entry["stringFields"][f"KPH: {field}"]
-        else:
-            logger.warning("Database entry doesn't have field '%s': URL=%s", field, url)
-            return url
+        advanced_field = [f for f in entry["stringFields"] if f"KPH: {field}" in f]
+        if advanced_field:
+            return advanced_field[0][f"KPH: {field}"]
+        logger.warning("Database entry doesn't have field '%s': URL=%s", field, url)
+        return url
