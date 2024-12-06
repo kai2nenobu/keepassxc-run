@@ -26,7 +26,7 @@ class SecretStore:
     def fetch(self, url: str) -> str:
         """Fetch a secret value from a KeePassXC entry which matches specified URL."""
         debug_flag = ["-vvv"] if self._debug else []
-        command = [self._exe, *debug_flag, "--unlock", "10,3000", "get", "--json", "--advanced-fields"]
+        command = [self._exe, *debug_flag, "--unlock", "10,3000", "get", "--raw"]
         stdin = f"url={url}"
         process = subprocess.run(
             args=command,
@@ -39,12 +39,13 @@ class SecretStore:
             logger.warning("Fail to fetch a secret value by %s: URL=%s, error=%s", self._exe, url, process.stderr)
             return url
         logger.debug("%s execution log: %s", self._exe, process.stderr)
-        credential = json.loads(process.stdout)
         field = url.split("/")[-1]
-        if field in ("username", "password", "url"):
-            return credential[field]
-        elif ("string_fields" in credential) and (field in credential["string_fields"]):
-            return credential["string_fields"][field]
+        result = json.loads(process.stdout)
+        entry = result["entries"][0]
+        if field in ("login", "password"):
+            return entry[field]
+        elif ("stringFields" in entry) and (f"KPH: {field}" in entry["stringFields"]):
+            return entry["stringFields"][f"KPH: {field}"]
         else:
             logger.warning("Database entry doesn't have field '%s': URL=%s", field, url)
             return url
