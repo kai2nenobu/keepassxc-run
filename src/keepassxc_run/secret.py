@@ -43,7 +43,7 @@ class SecretStore:
 
     def __init__(self, debug: bool = False):
         self._debug = debug
-        self._exe = self._find_git_credential_keepassxc()
+        self._exe: Optional[str] = None
 
     def _find_git_credential_keepassxc(self) -> str:
         exe = shutil.which("git-credential-keepassxc")
@@ -55,6 +55,8 @@ class SecretStore:
         return exe
 
     def _run_git_credential_keepassxc(self, url: str) -> subprocess.CompletedProcess:
+        if self._exe is None:
+            self._exe = self._find_git_credential_keepassxc()
         debug_flag = ["-vvv"] if self._debug else []
         command = [self._exe, *debug_flag, "--unlock", "20,1500", "get", "--raw"]
         stdin = f"url={url}"
