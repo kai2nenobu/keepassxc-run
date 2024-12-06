@@ -3,10 +3,30 @@ name = "keepassxc-run"
 version = "0.0.2"
 description = "KeePassXC runner"
 readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Tsunenobu Kai", email = "kai2nenobu@gmail.com" }]
+keywords = ["keepassxc"]
 requires-python = ">=3.9"
-dependencies = [
-    "python-dotenv>=1.0.1",
+dependencies = ["python-dotenv>=1.0.1"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Utilities",
+    "Topic :: Security",
 ]
+urls.homepage = "https://github.com/kai2nenobu/keepassxc-run"
+urls.documentation = "https://github.com/kai2nenobu/keepassxc-run#keepassxc-run"
+urls.changelog = "https://github.com/kai2nenobu/keepassxc-run/blob/main/CHANGELOG.md"
+urls.source = "https://github.com/kai2nenobu/keepassxc-run"
+urls.issues = "https://github.com/kai2nenobu/keepassxc-run/issues"
 
 [project.scripts]
 keepassxc-run = "keepassxc_run.cli:main"
