@@ -24,6 +24,8 @@ options:
   --env-file ENV_FILE  Enable Dotenv integration with specific Dotenv files to parse. For example: --env-file=.env
 ```
 
+`keepassxc-run` depends on [git-credential-keepassxc](https://github.com/Frederick888/git-credential-keepassxc) to fetch secrets from KeePassXC databases. Ensure that `git-credential-keepassxc` is installed and [configured](https://github.com/Frederick888/git-credential-keepassxc?tab=readme-ov-file#configuration).
+
 ## Usage
 
 `keepassxc-run` scans environment variables for secret references, loads the corresponding secrets from KeePassXC databases, then runs the provided command in a subprocess with the secrets made available as environment variables for the duration of the subprocess.
