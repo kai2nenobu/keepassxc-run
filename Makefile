@@ -91,5 +91,5 @@ KEEPASSXC := C:\Program Files\KeePassXC\KeePassXC.exe
 KEEPASSXC_CLI := C:\Program Files\KeePassXC\keepassxc-cli.exe
 restore-db: ## Restore a KeePassXC database for testing
 	@$(RM) ./tests/data/test_db.kdbx
-	"$(KEEPASSXC_CLI)" import --set-key-file ./tests/data/test.keyx ./tests/data/test_db.xml ./tests/data/test_db.kdbx
-	"$(KEEPASSXC)" --keyfile ./tests/data/test.keyx ./tests/data/test_db.kdbx &
+	"$(KEEPASSXC_CLI)" import --set-key-file ./tests/data/test_db.keyx ./tests/data/test_db.xml ./tests/data/test_db.kdbx
+	"$(KEEPASSXC)" --keyfile ./tests/data/test_db.keyx ./tests/data/test_db.kdbx &
