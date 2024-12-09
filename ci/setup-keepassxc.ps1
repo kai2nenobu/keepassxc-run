@@ -2,12 +2,12 @@ $ErrorActionPreference = 'Stop'
 $PSNativeCommandErrorActionPreference = $true
 
 # Install KeePassXC
-choco install -y keepassxc
+choco install -y --no-progress keepassxc
 
 # Install git-credential-keepassxc
 $zip_url = 'https://github.com/Frederick888/git-credential-keepassxc/releases/download/v0.14.1/windows-latest-minimal.zip'
 $zip_path = "${env:TEMP%}\git-credential-keepassxc.zip"
-curl.exe -L $zip_url -o $zip_path
+curl.exe -sSL $zip_url -o $zip_path
 7z x $zip_path -o"$env:USERPROFILE\.cargo\bin"
 
 # Import a KeePassXC database in XML format
