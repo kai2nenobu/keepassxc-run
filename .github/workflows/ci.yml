@@ -37,7 +37,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v4
       - name: Setup KeePassXC
-        shell: pwsh -File '{0}'
+        shell: pwsh -File {0}
         run: .\ci\setup-keepassxc.ps1
       - name: Tests with a KeePassXC database
         run: uv run pytest tests -m require_db -v --cov=src --cov-branch --cov-report=term --cov-report=html
