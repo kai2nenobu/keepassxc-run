@@ -14,5 +14,3 @@ curl.exe -sSL $zip_url -o $zip_path
 $keepassxc_cli = 'C:\Program Files\KeePassXC\keepassxc-cli.exe'
 &$keepassxc_cli import --set-key-file .\tests\data\test_db.keyx .\tests\data\test_db.xml .\tests\data\test_db.kdbx
 
-# Launch KeePassXC
-$keepassxc = 'C:\Program Files\KeePassXC\KeePassXC.exe'; &$keepassxc --config .\tests\data\keepassxc.ini --keyfile .\tests\data\test_db.keyx .\tests\data\test_db.kdbx

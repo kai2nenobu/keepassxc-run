@@ -37,8 +37,13 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v4
       - run: uv sync --all-groups
-      - name: Setup KeePassXC & Test
+      - name: Setup KeePassXC
+        run: .\ci\setup-keepassxc.ps1
+      - name: Test
         run: |
-          . .\ci\setup-keepassxc.ps1
+          # Launch KeePassXC
+          $keepassxc = 'C:\Program Files\KeePassXC\KeePassXC.exe'
+          &$keepassxc --config .\tests\data\keepassxc.ini --keyfile .\tests\data\test_db.keyx .\tests\data\test_db.kdbx
+          Start-Sleep -Seconds 3
           echo "url=keepassxc://example.com/password" | git-credential-keepassxc --config tests/data/git-credential-keepassxc.json -vvv --unlock 20,1500 get --raw
           #uv run pytest tests -m require_db -v --cov=src --cov-branch --cov-report=term --cov-report=html
