@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import shutil
 import subprocess
 from typing import Optional
@@ -58,7 +59,12 @@ class SecretStore:
         if self._exe is None:
             self._exe = self._find_git_credential_keepassxc()
         debug_flag = ["-vvv"] if self._debug else []
-        command = [self._exe, *debug_flag, "--unlock", "20,1500", "get", "--raw"]
+        if "KEEPASSXC_RUN_GCKPXC_CONFIG" in os.environ:
+            # Read "git-credential-keepassxc" config from environment variable
+            config_flag = ["--config", os.environ["KEEPASSXC_RUN_GCKPXC_CONFIG"]]
+        else:
+            config_flag = []
+        command = [self._exe, *debug_flag, *config_flag, "--unlock", "20,1500", "get", "--raw"]
         stdin = f"url={url}"
         process = subprocess.run(
             args=command,
