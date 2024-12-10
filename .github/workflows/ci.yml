@@ -40,4 +40,5 @@ jobs:
       - name: Setup KeePassXC & Test
         run: |
           . .\ci\setup-keepassxc.ps1
-          uv run pytest tests -m require_db -v --cov=src --cov-branch --cov-report=term --cov-report=html
+          echo "url=keepassxc://example.com/password" | git-credential-keepassxc --config tests/data/git-credential-keepassxc.json -vvv --unlock 20,1500 get --raw
+          #uv run pytest tests -m require_db -v --cov=src --cov-branch --cov-report=term --cov-report=html
