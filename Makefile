@@ -19,6 +19,7 @@ endif
 PROJECT := keepassxc-run
 UV ?= uv
 RUFF ?= $(UV) run ruff
+PRE_COMMIT ?= $(UV) run pre-commit
 TOX ?= $(UV) tool run --with tox-uv -- tox run
 TOX_FLAGS ?=
 PYINSTALLER ?= $(UV) run pyinstaller
@@ -45,7 +46,7 @@ setup: ## Configure a local dev environment. Execute once after cloning this rep
 	$(UV) sync
 
 lint: ## Lint all files
-	$(RUFF) check .
+	$(PRE_COMMIT) run --all-files --show-diff-on-failure
 
 format: ## Format all files
 	$(RUFF) format .
