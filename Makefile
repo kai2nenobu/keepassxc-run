@@ -53,6 +53,11 @@ format: ## Format all files
 test: export TOX_ENV = py312
 test: tox ## Test on a Python 3.12 environment
 
+# Don't use tox because fetching secrets by "git-credential-keepassxc" fails in tox environments
+# I don't know why.
+test-all: ## Run all tests including "required_db" marker
+	$(UV) run pytest tests -v --cov=src --cov-branch --cov-report=term --cov-report=html
+
 tox: ## Test on multiple versions by tox
 	$(TOX) $(TOX_FLAGS)
 

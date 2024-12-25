@@ -44,7 +44,7 @@ def test_call_command_with_option(capfd):
 class TestKeePassXC:
     def printenv(self, env: str):
         code = f"import os; print(os.environ['{env}'], end='')"
-        return run(["--", "python", "-c", code])
+        return run(["--no-masking", "--", "python", "-c", code])
 
     @pytest.mark.parametrize(
         ("url", "expected"),
@@ -68,3 +68,19 @@ class TestKeePassXC:
             assert rc == 0
             out, _ = capfd.readouterr()
             assert out == "keepassxc://example.com/UNKNOWN_FIELD"
+
+    def test_masking_stdout(self, capfd):
+        code = "import os; print(os.environ['TEST_SECRET'], end='')"
+        with patch.dict("os.environ", {"TEST_SECRET": "keepassxc://example.com/password"}):
+            rc = run(["--", "python", "-c", code])
+            assert rc == 0
+            out, _ = capfd.readouterr()
+            assert out == "<concealed by keepassxc-run>"
+
+    def test_masking_stderr(self, capfd):
+        code = "import os; import sys; print(os.environ['TEST_SECRET'], end='', file=sys.stderr)"
+        with patch.dict("os.environ", {"TEST_SECRET": "keepassxc://example.com/password"}):
+            rc = run(["--", "python", "-c", code])
+            assert rc == 0
+            _, err = capfd.readouterr()
+            assert err == "<concealed by keepassxc-run>"
