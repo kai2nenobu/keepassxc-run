@@ -1,7 +1,7 @@
 [![PyPI][pypi_badge]][pypi_project] ![PythonVersions][pyversions] [![LICENSE][license_badge]][license_url] [![CI][actions_status]][ci_workflow]
 
 [pypi_project]: https://pypi.org/project/keepassxc-run/
-[pypi_badge]: https://img.shields.io/badge/pypi-v0.0.3-orange
+[pypi_badge]: https://img.shields.io/badge/pypi-v0.1.0-orange
 [license_badge]: https://img.shields.io/badge/license-MIT-green
 [license_url]: https://github.com/kai2nenobu/keepassxc-run/blob/main/LICENSE
 [pyversions]: https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue
