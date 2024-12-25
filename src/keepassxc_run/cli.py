@@ -42,6 +42,12 @@ def run(argv: list[str]) -> int:
         default=[],
         help="Enable Dotenv integration with specific Dotenv files to parse. For example: --env-file=.env",
     )
+    parser.add_argument(
+        "--no-masking",
+        action="store_false",
+        dest="mask",
+        help="Disable masking of secrets on stdout and stderr.",
+    )
     try:
         args = parser.parse_args(argv)
     except argparse.ArgumentError as e:
@@ -64,7 +70,7 @@ def run(argv: list[str]) -> int:
     logger.debug("keepassxc-run version: %s", keepassxc_run.__version__)
     secret_store = SecretStore(debug=args.debug)
     envs, secrets = _read_envs(args.env_file, secret_store)
-    process = SubProcess(args.command, envs, secrets)
+    process = SubProcess(args.command, envs, secrets, args.mask)
     rc = asyncio.run(process.run())
     return rc
 
@@ -74,6 +80,7 @@ def main():
         rc = run(sys.argv[1:])
     except Exception as e:
         logger.error("keepassxc-run aborted with some error: %s", e)
+        logger.debug("Error Stack", exc_info=e)
         rc = 2
     sys.exit(rc)
 
