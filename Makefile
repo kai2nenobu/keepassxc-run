@@ -92,3 +92,10 @@ upload-archive: ## Upload an archive per platform to GitHub release assets
 
 clean: ## Clean up generated files
 	@$(RM) -r build/ dist/ archive/
+
+KEEPASSXC := C:\Program Files\KeePassXC\KeePassXC.exe
+KEEPASSXC_CLI := C:\Program Files\KeePassXC\keepassxc-cli.exe
+restore-db: ## Restore a KeePassXC database for testing
+	@$(RM) ./tests/data/test_db.kdbx
+	"$(KEEPASSXC_CLI)" import --set-key-file ./tests/data/test_db.keyx ./tests/data/test_db.xml ./tests/data/test_db.kdbx
+	powershell.exe -NoProfile -Command '&"$(KEEPASSXC)" --config ./tests/data/keepassxc.ini --keyfile ./tests/data/test_db.keyx ./tests/data/test_db.kdbx'
