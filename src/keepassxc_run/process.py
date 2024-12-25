@@ -8,12 +8,8 @@ logger = logging.getLogger(__name__)
 
 async def chunked_stream(reader: asyncio.streams.StreamReader):
     """Read a stream per chunk."""
-    while True:
-        chunk = await reader.read(4096)
-        if chunk:
-            yield chunk
-        else:
-            break
+    while chunk := await reader.read(4096):
+        yield chunk
 
 
 class SubProcess:
