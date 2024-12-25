@@ -24,7 +24,9 @@ def _read_envs(env_files: list[str], secret_store: SecretStore) -> tuple[dict[st
         if value.startswith("keepassxc://"):
             secret = secret_store.fetch(value)
             envs[key] = secret
-            secrets.append(secret)
+            # If the secret matches the value, do not treat it as confidential information
+            if secret != value:
+                secrets.append(secret)
     return envs, secrets
 
 
