@@ -49,7 +49,7 @@ class SubProcess:
             _, _, rc = await asyncio.gather(
                 self._mask_stream(process.stdout, sys.stdout.buffer),
                 self._mask_stream(process.stderr, sys.stderr.buffer),
-                process.wait()
+                process.wait(),
             )
             return rc
         else:
