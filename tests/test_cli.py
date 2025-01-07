@@ -42,6 +42,11 @@ def test_call_command_with_option(capfd):
 
 @pytest.mark.require_db
 class TestKeePassXC:
+    @pytest.fixture(autouse=True)
+    def gckpxc_config(self):
+        with patch.dict("os.environ", {"KEEPASSXC_RUN_GCKPXC_CONFIG": "tests/data/git-credential-keepassxc.json"}):
+            yield
+
     def printenv(self, env: str):
         code = f"import os; print(os.environ['{env}'], end='')"
         return run(["--no-masking", "--", "python", "-c", code])
