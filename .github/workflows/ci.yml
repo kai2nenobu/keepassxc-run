@@ -43,6 +43,6 @@ jobs:
         run: |
           # Launch KeePassXC
           &'C:\Program Files\KeePassXC\KeePassXC.exe' --config .\tests\data\keepassxc.ini --keyfile .\tests\data\test_db.keyx .\tests\data\test_db.kdbx
-          Start-Sleep -Seconds 3
+          Start-Sleep -Seconds 5
           # Test
-          uv run pytest tests -m require_db -v --cov=src --cov-branch --cov-report=term --cov-report=html
+          uv run pytest tests -v --cov=src --cov-branch --cov-report=term --cov-report=html
