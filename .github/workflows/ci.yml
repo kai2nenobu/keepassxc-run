@@ -30,3 +30,19 @@ jobs:
         uses: astral-sh/setup-uv@v5
       - name: Test by tox
         run: make tox
+  db_test:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+      - run: uv sync --all-groups
+      - name: Setup KeePassXC
+        run: .\ci\setup-keepassxc.ps1
+      - name: Test
+        run: |
+          # Launch KeePassXC
+          &'C:\Program Files\KeePassXC\KeePassXC.exe' --config .\tests\data\keepassxc.ini --keyfile .\tests\data\test_db.keyx .\tests\data\test_db.kdbx
+          Start-Sleep -Seconds 5
+          # Test
+          uv run pytest tests -v --cov=src --cov-branch --cov-report=term --cov-report=html

@@ -42,6 +42,11 @@ def test_call_command_with_option(capfd):
 
 @pytest.mark.require_db
 class TestKeePassXC:
+    @pytest.fixture(autouse=True)
+    def gckpxc_config(self):
+        with patch.dict("os.environ", {"KEEPASSXC_RUN_GCKPXC_CONFIG": "tests/data/git-credential-keepassxc.json"}):
+            yield
+
     def printenv(self, env: str):
         code = f"import os; print(os.environ['{env}'], end='')"
         return run(["--no-masking", "--", "python", "-c", code])
@@ -53,6 +58,11 @@ class TestKeePassXC:
             pytest.param("keepassxc://example.com/username", "testuser", id="username is alias for login"),
             pytest.param("keepassxc://example.com/password", "testuser*p@ssw0rd", id="password"),
             pytest.param("keepassxc://example.com/api_key", "my*api*key", id="advanced_field"),
+            pytest.param(
+                "keepassxc://example.com/UNKNOWN_FIELD",
+                "keepassxc://example.com/UNKNOWN_FIELD",
+                id="unknown field returns url as is",
+            ),
         ],
     )
     def test_example_com(self, capfd, url, expected):
@@ -61,13 +71,6 @@ class TestKeePassXC:
             assert rc == 0
             out, _ = capfd.readouterr()
             assert out == expected
-
-    def test_unknown_field_returns_url_asis(self, capfd):
-        with patch.dict("os.environ", {"TEST_SECRET": "keepassxc://example.com/UNKNOWN_FIELD"}):
-            rc = self.printenv("TEST_SECRET")
-            assert rc == 0
-            out, _ = capfd.readouterr()
-            assert out == "keepassxc://example.com/UNKNOWN_FIELD"
 
     def test_masking_stdout(self, capfd):
         code = "import os; print(os.environ['TEST_SECRET'], end='')"
