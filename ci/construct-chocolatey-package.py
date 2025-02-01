@@ -8,18 +8,29 @@ import hashlib
 from pathlib import Path
 import shutil
 import sys
+import tomllib
 
 from jinja2 import Template
 
 
 def parse_args(argv: list[str]):
     parser = argparse.ArgumentParser("")
-    parser.add_argument("--version", type=str, required=True, help="package version")
+    parser.add_argument(
+        "--version", type=str, help="package version. read the project version in pyproject.toml if not specified"
+    )
     parser.add_argument("--archive", type=str, required=True, help="path to zip archive")
-    parser.add_argument("--template-dir", type=str, required=True, help="directory including package templates")
+    parser.add_argument(
+        "--template-dir", type=str, default="package/chocolatey", help="directory including package templates"
+    )
     parser.add_argument("--output-dir", type=str, required=True, help="output directory")
     args = parser.parse_args(argv)
     return args
+
+
+def pyproject_version():
+    with open("pyproject.toml", mode="rb") as f:
+        pyproject = tomllib.load(f)
+        return pyproject["project"]["version"]
 
 
 def render_template(template_dir: Path, output_dir: Path, template_name: str, variables: dict):
@@ -49,8 +60,9 @@ def main():
     archive = Path(args.archive)
     template_dir = Path(args.template_dir)
     output_dir = Path(args.output_dir)
+    version = args.version if args.version else pyproject_version()
 
-    construct_package(template_dir, output_dir, archive, args.version)
+    construct_package(template_dir, output_dir, archive, version)
 
 
 if __name__ == "__main__":
