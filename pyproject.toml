@@ -50,6 +50,7 @@ build.targets.sdist.include = [
 
 [tool.uv]
 dev-dependencies = [
+    "jinja2>=3.1.5",
     "pre-commit-uv>=4.1.4",
     "pyinstaller>=6.11.1",
     "ruff>=0.6.8",

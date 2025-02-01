@@ -3,7 +3,7 @@
   <metadata>
     <id>keepassxc-run</id>
     <title>keepassxc-run</title>
-    <version>0.1.0</version>
+    <version>{{ version }}</version>
     <authors>kai2nenobu</authors>
     <owners>kai2nenobu</owners>
     <summary>Pass secrets in KeePassXC databases as environment variables to an application or script.</summary>
@@ -30,11 +30,11 @@ options:
     <projectUrl>https://github.com/kai2nenobu/keepassxc-run</projectUrl>
     <tags>keepassxc password-manager</tags>
     <copyright>Tsunenobu Kai</copyright>
-    <licenseUrl>https://github.com/kai2nenobu/keepassxc-run/blob/v0.1.0/LICENSE</licenseUrl>
+    <licenseUrl>https://github.com/kai2nenobu/keepassxc-run/blob/{{ tag_version }}/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!-- <iconUrl></iconUrl> -->
-    <releaseNotes>https://github.com/kai2nenobu/keepassxc-run/releases/tag/v0.1.0</releaseNotes>
-    <docsUrl>https://github.com/kai2nenobu/keepassxc-run/blob/v0.1.0/README.md</docsUrl>
+    <releaseNotes>https://github.com/kai2nenobu/keepassxc-run/releases/tag/{{ tag_version }}</releaseNotes>
+    <docsUrl>https://github.com/kai2nenobu/keepassxc-run/blob/{{ tag_version }}/README.md</docsUrl>
     <bugTrackerUrl>https://github.com/kai2nenobu/keepassxc-run/issues</bugTrackerUrl>
     <projectSourceUrl>https://github.com/kai2nenobu/keepassxc-run</projectSourceUrl>
     <packageSourceUrl>https://github.com/kai2nenobu/keepassxc-run/tree/main/package/chocolatey</packageSourceUrl>
