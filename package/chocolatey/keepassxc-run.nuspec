@@ -38,7 +38,9 @@ options:
     <bugTrackerUrl>https://github.com/kai2nenobu/keepassxc-run/issues</bugTrackerUrl>
     <projectSourceUrl>https://github.com/kai2nenobu/keepassxc-run</projectSourceUrl>
     <packageSourceUrl>https://github.com/kai2nenobu/keepassxc-run/tree/main/package/chocolatey</packageSourceUrl>
-    <dependencies></dependencies>
+    <dependencies>
+      <dependency id="git-credential-keepassxc" />
+    </dependencies>
   </metadata>
   <files>
     <file src="legal\**" target="legal" />
