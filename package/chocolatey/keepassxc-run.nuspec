@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>keepassxc-run</id>
+    <title>keepassxc-run</title>
+    <version>{{ version }}</version>
+    <authors>kai2nenobu</authors>
+    <owners>kai2nenobu</owners>
+    <summary>Pass secrets in KeePassXC databases as environment variables to an application or script.</summary>
+    <description><![CDATA[
+# keepassxc-run
+
+Pass secrets in KeePassXC databases as environment variables to an application or script. This project is inspired by [op run](https://developer.1password.com/docs/cli/reference/commands/run/) command.
+
+```sh
+usage: keepassxc-run.py [options] -- [command ...]
+
+positional arguments:
+  command              command to execute. prepend "--" if you specify command option like "--version"
+
+options:
+  --help               show this help message
+  --debug              Enable debug log
+  --env-file ENV_FILE  Enable Dotenv integration with specific Dotenv files to parse. For example: --env-file=.env
+  --no-masking         Disable masking of secrets on stdout and stderr.  
+```
+
+`keepassxc-run` depends on [git-credential-keepassxc](https://github.com/Frederick888/git-credential-keepassxc) to fetch secrets from KeePassXC databases. Ensure that `git-credential-keepassxc` is installed and [configured](https://github.com/Frederick888/git-credential-keepassxc?tab=readme-ov-file#configuration).
+]]></description>
+    <projectUrl>https://github.com/kai2nenobu/keepassxc-run</projectUrl>
+    <tags>keepassxc password-manager</tags>
+    <copyright>Tsunenobu Kai</copyright>
+    <licenseUrl>https://github.com/kai2nenobu/keepassxc-run/blob/{{ tag_version }}/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <!-- <iconUrl></iconUrl> -->
+    <releaseNotes>https://github.com/kai2nenobu/keepassxc-run/releases/tag/{{ tag_version }}</releaseNotes>
+    <docsUrl>https://github.com/kai2nenobu/keepassxc-run/blob/{{ tag_version }}/README.md</docsUrl>
+    <bugTrackerUrl>https://github.com/kai2nenobu/keepassxc-run/issues</bugTrackerUrl>
+    <projectSourceUrl>https://github.com/kai2nenobu/keepassxc-run</projectSourceUrl>
+    <packageSourceUrl>https://github.com/kai2nenobu/keepassxc-run/tree/main/package/chocolatey</packageSourceUrl>
+    <dependencies>
+      <dependency id="git-credential-keepassxc" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="legal\**" target="legal" />
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

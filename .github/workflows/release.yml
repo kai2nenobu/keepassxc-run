@@ -68,11 +68,39 @@ jobs:
         run: ./dist/keepassxc-run --help
       - uses: actions/upload-artifact@v4
         with:
-          name: "exe-${{ matrix.OS }}"
-          path: ./dist/
+          name: "pyinstaller-${{ matrix.OS }}"
+          path: ./archive/
       - name: Upload an archive as release assets
         if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
         run: make upload-archive
         env:
           TAG_NAME: ${{ github.event.release.tag_name }}
           GITHUB_TOKEN: ${{ secrets.github_token }}
+  chocolatey:
+    needs: [pyinstaller]
+    runs-on: windows-2022
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: "pyinstaller-windows-2022"
+          path: ./archive/
+      - name: Construct chocolatey package
+        run: uv run ci/construct-chocolatey-package.py --archive archive/keepassxc-run_Windows_x86_64.zip --output-dir dist/chocolatey
+      - run: choco pack
+        working-directory: dist/chocolatey
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: dist/chocolatey/*.nupkg
+      - name: Publish chocolatey package
+        if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+        run: choco push --source 'https://push.chocolatey.org' --api-key "$CHOCOLATEY_API_KEY"
+        working-directory: dist/chocolatey
+        env:
+          CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
