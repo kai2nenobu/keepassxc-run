@@ -51,7 +51,9 @@ def construct_package(template_dir: Path, output_dir: Path, archive: Path, versi
         "zip_checksum": archive_checksum,
     }
     render_template(template_dir, output_dir, "keepassxc-run.nuspec", variables)
+    render_template(template_dir, output_dir, "legal/VERIFICATION.txt", variables)
     render_template(template_dir, output_dir, "tools/chocolateyInstall.ps1", variables)
+    shutil.copy("LICENSE", output_dir / "legal")
     shutil.copy(archive, output_dir / "tools" / archive.name)
 
 
