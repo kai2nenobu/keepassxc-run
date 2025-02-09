@@ -3,7 +3,8 @@ name = "keepassxc-run"
 version = "0.1.0"
 description = "KeePassXC runner"
 readme = "README.md"
-license = { text = "MIT License" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Tsunenobu Kai", email = "kai2nenobu@gmail.com" }]
 keywords = ["keepassxc"]
 requires-python = ">=3.9"
@@ -18,7 +19,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Topic :: Utilities",
     "Topic :: Security",
 ]
