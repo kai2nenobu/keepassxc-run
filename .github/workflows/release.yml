@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup Python
         uses: actions/setup-python@v5
       - name: Install uv
@@ -42,7 +42,7 @@ jobs:
     permissions:
       id-token: write # mandatory for trusted publishing
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: package
           path: dist/
@@ -58,7 +58,7 @@ jobs:
         OS: [ubuntu-24.04, windows-2022, macos-14]
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -82,11 +82,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
       - name: Install uv
         uses: astral-sh/setup-uv@v6
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: "pyinstaller-windows-2022"
           path: ./archive/
