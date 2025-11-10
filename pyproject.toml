@@ -34,7 +34,7 @@ keepassxc-run = "keepassxc_run.cli:main"
 [dependency-groups]
 dev = [
     "jinja2>=3.1.5",
-    "pre-commit-uv>=4.1.4",
+    "prek>=0.2.13",
     "pyinstaller>=6.11.1",
     "ruff>=0.6.8",
 ]
