@@ -1,0 +1,51 @@
+[settings]
+unix_default_inline_shell_args = 'bash -o pipefail -e -c'
+windows_default_inline_shell_args = '"C:\Program Files\Git\bin\bash.exe" -o pipefail -e -c'
+
+[tools]
+uv = "latest"
+
+[env]
+# keep parity with Makefile
+PYTHONUTF8 = "1"
+
+[vars]
+PROJECT = "keepassxc-run"
+UV = "uv"
+RUFF = "{{vars.UV}} run ruff"
+PREK = "{{vars.UV}} run prek"
+TOX = '{{vars.UV}} tool run --from "tox>=4,<5" --with tox-uv -- tox run'
+
+[tasks.setup]
+description = "Configure a local dev environment. Execute once after cloning"
+run = [
+    "{{vars.UV}} sync",
+    "{{vars.PREK}} install",
+]
+
+[tasks.lint]
+description = "Lint all files"
+run = "{{vars.PREK}} run --all-files --show-diff-on-failure"
+
+[tasks.format]
+description = "Format all files"
+run = "{{vars.RUFF}} format ."
+
+[tasks.test]
+description = "Test on a Python 3.12 environment"
+env = { TOX_ENV = "py312" }
+run = "{{vars.TOX}}"
+
+[tasks.test-all]
+description = "Run all tests including 'required_db' marker"
+# Don't use tox because fetching secrets by "git-credential-keepassxc" fails in tox environments
+# I don't know why.
+run = "{{vars.UV}} run pytest tests -v --cov=src --cov-branch --cov-report=term --cov-report=html"
+
+[tasks.tox]
+description = "Test on multiple Python versions using tox"
+run = "{{vars.TOX}}"
+
+[tasks.build]
+description = "Build a package"
+run = "uv build"
