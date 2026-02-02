@@ -27,9 +27,6 @@ archive_file = '''
 KEEPASSXC = 'C:\Program Files\KeePassXC\KeePassXC.exe'
 KEEPASSXC_CLI = 'C:\Program Files\KeePassXC\keepassxc-cli.exe'
 
-[tasks.hello]
-run = "echo {{vars.executable_name}} {{vars.archive_file}}"
-
 [tasks.setup]
 description = "Configure a local dev environment. Execute once after cloning"
 run = [
