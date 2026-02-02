@@ -4,6 +4,7 @@ windows_default_inline_shell_args = '"C:\Program Files\Git\bin\bash.exe" -o pipe
 
 [tools]
 uv = "latest"
+gh = "latest"
 
 [env]
 # keep parity with Makefile
@@ -15,6 +16,16 @@ UV = "uv"
 RUFF = "{{vars.UV}} run ruff"
 PREK = "{{vars.UV}} run prek"
 TOX = '{{vars.UV}} tool run --from "tox>=4,<5" --with tox-uv -- tox run'
+PYINSTALLER = "{{vars.UV}} run pyinstaller"
+PYINSTALLER_FLAGS = '{% if os() != "windows" %}--strip{% endif %}'
+executable_name = '{{ vars.PROJECT }}{% if os() == "windows" %}.exe{% endif %}'
+archive_file = '''
+{{- vars.PROJECT ~ "_" ~ os() ~ "_" ~ arch() -}}
+{% if os() == "windows" %}.zip{% else %}.tar.gz{% endif -%}
+'''
+
+[tasks.hello]
+run = "echo {{vars.executable_name}} {{vars.archive_file}}"
 
 [tasks.setup]
 description = "Configure a local dev environment. Execute once after cloning"
@@ -49,3 +60,34 @@ run = "{{vars.TOX}}"
 [tasks.build]
 description = "Build a package"
 run = "uv build"
+
+[tasks.build-exe]
+description = "Build a single executable by pyinstaller"
+run = "{{vars.PYINSTALLER}} {{vars.PYINSTALLER_FLAGS}} --onefile ./bin/{{vars.PROJECT}}.py"
+
+[tasks.archive-exe]
+description = "Archive a single executable (creates zip on Windows, tar.gz elsewhere)"
+depends = "build-exe"
+run = '''
+mkdir -p archive && cd dist
+{% if os() == "windows" %}
+pwsh -NoProfile -Command "Compress-Archive -DestinationPath ../archive/{{vars.archive_file}} -LiteralPath {{vars.executable_name}} -Update"
+{% else %}
+tar cf "../archive/{{vars.archive_file}}" "{{vars.executable_name}}"
+{% endif %}
+'''
+
+[tasks.upload-archive]
+description = "Upload an archive per platform to GitHub release assets"
+depends = "archive-exe"
+run = '''
+if [ -z "$TAG_NAME" ]; then
+  echo "TAG_NAME environment variable not set. Export TAG_NAME before running."
+  exit 1
+fi
+gh release upload "$TAG_NAME" archive/*
+'''
+
+[tasks.clean]
+description = "Clean up generated files"
+run = "rm -rf build/ dist/ archive/ || true"
