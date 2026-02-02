@@ -7,7 +7,6 @@ uv = "latest"
 gh = "latest"
 
 [env]
-# keep parity with Makefile
 PYTHONUTF8 = "1"
 
 [vars]
@@ -16,6 +15,7 @@ UV = "uv"
 RUFF = "{{vars.UV}} run ruff"
 PREK = "{{vars.UV}} run prek"
 TOX = '{{vars.UV}} tool run --from "tox>=4,<5" --with tox-uv -- tox run'
+# variables for pyinstaller
 PYINSTALLER = "{{vars.UV}} run pyinstaller"
 PYINSTALLER_FLAGS = '{% if os() != "windows" %}--strip{% endif %}'
 executable_name = '{{ vars.PROJECT }}{% if os() == "windows" %}.exe{% endif %}'
@@ -23,6 +23,9 @@ archive_file = '''
 {{- vars.PROJECT ~ "_" ~ os() ~ "_" ~ arch() -}}
 {% if os() == "windows" %}.zip{% else %}.tar.gz{% endif -%}
 '''
+# variables for KeePassXC
+KEEPASSXC = 'C:\Program Files\KeePassXC\KeePassXC.exe'
+KEEPASSXC_CLI = 'C:\Program Files\KeePassXC\keepassxc-cli.exe'
 
 [tasks.hello]
 run = "echo {{vars.executable_name}} {{vars.archive_file}}"
@@ -91,3 +94,12 @@ gh release upload "$TAG_NAME" archive/*
 [tasks.clean]
 description = "Clean up generated files"
 run = "rm -rf build/ dist/ archive/ || true"
+
+[tasks.restore-db]
+description = "Restore the sample KeePassXC database for tests"
+run = 'echo "\"restore-db\" task is available on Windows only" && exit 1'
+run_windows = '''
+rm -f ./tests/data/test_db.kdbx
+"{{vars.KEEPASSXC_CLI}}" import --set-key-file ./tests/data/test_db.keyx ./tests/data/test_db.xml ./tests/data/test_db.kdbx
+powershell.exe -NoProfile -Command '&"{{vars.KEEPASSXC}}" --config ./tests/data/keepassxc.ini --keyfile ./tests/data/test_db.keyx ./tests/data/test_db.kdbx'
+'''
